@@ -3,7 +3,7 @@ package cs123A;
 public class Patient {
 
 	//---- Stores the number of 
-	public final static int NUMBER_OF_FEATURES = 11;
+	private final static int NUMBER_OF_FEATURES = 11;
 	private final static int BENIGN_INDICATOR = 2;
 	private final static int MALIGNANT_INDICATOR = 4;
 	
@@ -132,6 +132,21 @@ public class Patient {
 	}
 	
 	
+	/**
+	 * Accessor for elements 
+	 * 
+	 * @return Number of measureable datapoints for each patient.
+	 */
+	public static int numberDataElementsPerPatient(){
+		return NUMBER_OF_FEATURES - 2;
+	}
+	
+	
+	/**
+	 * Accessor to determine whether the patient's tumor is malignant or benign.
+	 * 
+	 * @return True if malignant and False if benign.
+	 */
 	public boolean isMalignant(){
 		return malignant;
 	}

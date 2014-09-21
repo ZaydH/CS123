@@ -15,7 +15,8 @@ public class GAChromosome {
 	 * Constructor for Genetic Algorithm Chromosome. 
 	 */
 	private GAChromosome(){
-		gainVector = new int[Patient.NUMBER_OF_FEATURES - 2];
+		//---- Create the gain and offset vectors for the population.
+		gainVector = new int[Patient.numberDataElementsPerPatient()];
 		offset = 0;
 		
 		//--- Create the random number generator if it does not exist. 
