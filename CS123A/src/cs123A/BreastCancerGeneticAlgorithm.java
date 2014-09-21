@@ -5,8 +5,9 @@ import java.util.Scanner;
 
 public class BreastCancerGeneticAlgorithm {
 
-	private BreastCancerDataSet trainingDataSet;
-	private BreastCancerDataSet verificationDataSet;
+	private BreastCancerDataSet trainingDataSet;			//---- Used to train the linear classifier.
+	private BreastCancerDataSet verificationDataSet;  		//---- Used to measure the quality of the training set results.
+	private GAChromosomePopulation chromosomePopulation;	//---- Set of chromosomes used in the genetic algorithm.
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -37,6 +38,9 @@ public class BreastCancerGeneticAlgorithm {
 		
 		//---- Parse the dataset file.
 		this.parseDataSetFile(breastCancerDataSetFile);
+		
+		//---- Create the genetic algorithm chromosome population.
+		chromosomePopulation = GAChromosomePopulation.createRandomPopulation();
 		
 	}
 	
