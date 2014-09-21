@@ -3,7 +3,7 @@ package cs123A;
 public class Patient {
 
 	//---- Stores the number of 
-	private final static int NUMBER_OF_FEATURES = 11;
+	public final static int NUMBER_OF_FEATURES = 11;
 	private final static int BENIGN_INDICATOR = 2;
 	private final static int MALIGNANT_INDICATOR = 4;
 	
@@ -105,7 +105,11 @@ public class Patient {
 	 * @param offset	 Offset correction factor for this linear function
 	 * @return
 	 */
-	public long calculateLinearFunction(int[] gainVector, int offset){
+	public long calculateLinearFunction(GAChromosome chromosome){
+		
+		//---- Extract chromosome features.
+		int[] gainVector = chromosome.getGainVector();
+		int offset = chromosome.getOffset();
 		
 		//----- Include the offset correction.
 		long linearFunctionWeight = offset;
