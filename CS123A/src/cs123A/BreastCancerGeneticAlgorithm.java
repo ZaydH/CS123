@@ -16,6 +16,19 @@ public class BreastCancerGeneticAlgorithm {
 	}
 
 	
+	/**
+	 * Constructor for Breast Cancer Genetic Algorithm using default data set file location.
+	 */
+	public BreastCancerGeneticAlgorithm(){
+		this("breast-cancer-wisconsin.data.txt");
+	}
+	
+	
+	/**
+	 * Constructor for the breast cancer genetic algorithm that allows users to specify a dataset file.
+	 * 
+	 * @param breastCancerDataSetFile Path to the data set file.
+	 */
 	public BreastCancerGeneticAlgorithm(String breastCancerDataSetFile){
 		
 		//---- Initialize the training and verification data sets.
@@ -44,13 +57,24 @@ public class BreastCancerGeneticAlgorithm {
 			int patientCount = 0;
 			while(patientCount < BreastCancerDataSet.TRAINING_DATA_SET_SIZE){
 				fileline = dataFileIn.nextLine();//---- Get the file line.
+				
+				//---- Ignore the incomplete dataset elements.
+				if(fileline.contains("?")) continue;
+				
 				//----- Add next patient to the data set.
 				trainingDataSet.addPatient(fileline);
+				patientCount++; //--- Increment the number of patients in the dataset.
 			}
 			
 			//----- After building the training set, build the verification data set.
-			while((fileline = dataFileIn.nextLine()) != null){
+			fileline = dataFileIn.nextLine();
+			while(fileline != null){
+				//---- Ignore the incomplete dataset elements.
+				if(fileline.contains("?")) continue;
+				//----- If valid data element, add it to the verification set.
 				verificationDataSet.addPatient(fileline);
+				//---- Get the next file line.
+				fileline = dataFileIn.nextLine();
 			}
 			
 			//---- Close the input stream.

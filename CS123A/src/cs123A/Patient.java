@@ -46,47 +46,47 @@ public class Patient {
 		
 		int index = 0; //---- Allow for easy index insertion
 		//---- Extract ID number
-		idNumber = Long.getLong(features[index++]);
+		idNumber = Long.valueOf(features[index++]);
 		
 		//---- Get clump thickness 
-		clumpThickness = Integer.getInteger(features[index++]);
-		assert( clumpThickness >= 1 && clumpThickness <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );
+		clumpThickness = Integer.valueOf(features[index++]);
 		
 		//---- Get uniformity of cell size
-		cellSizeUniformity = Integer.getInteger(features[index++]);
-		assert( cellSizeUniformity >= 1 && cellSizeUniformity <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );
+		cellSizeUniformity = Integer.valueOf(features[index++]);
 		
 		//---- Get uniformity of cell shape
-		cellShapeUniformity = Integer.getInteger(features[index++]);
-		assert( cellShapeUniformity >= 1 && cellShapeUniformity <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );
+		cellShapeUniformity = Integer.valueOf(features[index++]);
 		
 		//---- Get uniformity of cell shape
-		marginalAdhesion = Integer.getInteger(features[index++]);
-		assert( marginalAdhesion >= 1 && marginalAdhesion <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );		
+		marginalAdhesion = Integer.valueOf(features[index++]);
 		
 		//---- Get single epithelial cell size
-		singleEpithelialCellSize = Integer.getInteger(features[index++]);
-		assert( singleEpithelialCellSize >= 1 && singleEpithelialCellSize <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );		
+		singleEpithelialCellSize = Integer.valueOf(features[index++]);
 		
 		//---- Get bare nucleoli
-		bareNucleoli = Integer.getInteger(features[index++]);
-		assert( bareNucleoli >= 1 && bareNucleoli <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );		
+		bareNucleoli = Integer.valueOf(features[index++]);
 		
 		//---- Get bland chromatin rating.
-		blandChromatin = Integer.getInteger(features[index++]);
-		assert( blandChromatin >= 1 && blandChromatin <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );		
+		blandChromatin = Integer.valueOf(features[index++]);
 		
 		//---- Get uniformity of cell shape
-		normalNucleoli = Integer.getInteger(features[index++]);
-		assert( normalNucleoli >= 1 && normalNucleoli <= 10 );
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );		
+		normalNucleoli = Integer.valueOf(features[index++]);
 		
 		//---- Get mitoses rating.
-		mitoses = Integer.getInteger(features[index++]);
-		assert( mitoses >= 1 && mitoses <= 10 );	
+		assert( Integer.valueOf(features[index]) >= 1 && Integer.valueOf(features[index]) <= 10 );		
+		mitoses = Integer.valueOf(features[index++]);
 		
 		//---- Check if the patient tumor is malignant or benign
-		if( Integer.getInteger(features[index]) == BENIGN_INDICATOR ) malignant = false;
-		else if( Integer.getInteger(features[index]) == MALIGNANT_INDICATOR ) malignant = true;
+		if( Integer.valueOf(features[index]) == BENIGN_INDICATOR ) malignant = false;
+		else if( Integer.valueOf(features[index]) == MALIGNANT_INDICATOR ) malignant = true;
 		else assert(false);
 		index++; //---- Increment index count.
 		
@@ -112,15 +112,15 @@ public class Patient {
 
 		//----- Calculate the linear parameters for each feature.
 		int index = 0;
-		linearFunctionWeight += gainVector[index++] * clumpThickness;
-		linearFunctionWeight += gainVector[index++] * cellSizeUniformity;
-		linearFunctionWeight += gainVector[index++] * cellShapeUniformity;
-		linearFunctionWeight += gainVector[index++] * marginalAdhesion;
-		linearFunctionWeight += gainVector[index++] * singleEpithelialCellSize;
-		linearFunctionWeight += gainVector[index++] * bareNucleoli;
-		linearFunctionWeight += gainVector[index++] * blandChromatin;
-		linearFunctionWeight += gainVector[index++] * normalNucleoli;
-		linearFunctionWeight += gainVector[index++] * mitoses;		
+		linearFunctionWeight += (long)gainVector[index++] * clumpThickness;
+		linearFunctionWeight += (long)gainVector[index++] * cellSizeUniformity;
+		linearFunctionWeight += (long)gainVector[index++] * cellShapeUniformity;
+		linearFunctionWeight += (long)gainVector[index++] * marginalAdhesion;
+		linearFunctionWeight += (long)gainVector[index++] * singleEpithelialCellSize;
+		linearFunctionWeight += (long)gainVector[index++] * bareNucleoli;
+		linearFunctionWeight += (long)gainVector[index++] * blandChromatin;
+		linearFunctionWeight += (long)gainVector[index++] * normalNucleoli;
+		linearFunctionWeight += (long)gainVector[index++] * mitoses;		
 
 		//---- Correct for whether the tumor is malignant or not.
 		if(malignant) return linearFunctionWeight;
