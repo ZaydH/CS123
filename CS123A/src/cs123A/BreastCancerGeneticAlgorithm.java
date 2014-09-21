@@ -67,14 +67,16 @@ public class BreastCancerGeneticAlgorithm {
 			}
 			
 			//----- After building the training set, build the verification data set.
-			fileline = dataFileIn.nextLine();
-			while(fileline != null){
+			while( dataFileIn.hasNext() ){
+				
+				//---- Get the next line.
+				fileline = dataFileIn.nextLine();
+				
 				//---- Ignore the incomplete dataset elements.
 				if(fileline.contains("?")) continue;
+				
 				//----- If valid data element, add it to the verification set.
 				verificationDataSet.addPatient(fileline);
-				//---- Get the next file line.
-				fileline = dataFileIn.nextLine();
 			}
 			
 			//---- Close the input stream.

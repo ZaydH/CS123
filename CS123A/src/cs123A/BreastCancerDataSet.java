@@ -27,4 +27,14 @@ public class BreastCancerDataSet {
 	}
 	
 	
+	/**
+	 * Accessor for number of patients in the dataset.
+	 * 
+	 * @return Number of patients in the data set.
+	 */
+	public int getDataSetSize(){
+		return setOfPatients.size();
+	}
+	
+	
 }
