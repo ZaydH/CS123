@@ -114,6 +114,9 @@ public class BreastCancerGeneticAlgorithm {
 		//FIX_ME Write the code to run the genetic algorithm.
 		for(generationNumber = 0; generationNumber < NUMBER_OF_GENERATIONS; generationNumber++){
 			
+			//---- Score population members.
+			chromosomePopulation.scorePopulationMembers(trainingDataSet);
+			
 			//---- Build a new chromosome population.
 			GAChromosomePopulation newPopulation = new GAChromosomePopulation();
 			

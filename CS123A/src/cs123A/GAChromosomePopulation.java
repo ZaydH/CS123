@@ -85,7 +85,6 @@ public class GAChromosomePopulation {
 	}
 	
 	
-	
 	/**
 	 * Returns the best chromosomes from the population.
 	 * 
@@ -121,6 +120,32 @@ public class GAChromosomePopulation {
 		
 		//---- Adds a new chromosome to the population.
 		populationMembers.add(newChromosome);
+	}
+	
+	
+	/**
+	 * Scores the chromosome population based off the passed in dataset.
+	 * 
+	 * @param dataSet Breast Cancer Data Set by Which the Population will be Scored.
+	 */
+	public void scorePopulationMembers(BreastCancerDataSet dataSet){
+	
+		GAChromosome tempChromosome;
+		int chromosomeScore;
+		
+		//---- Iterate through all population members and generate their score.
+		for(int i = 0; i < populationMembers.size(); i++){
+			
+			//---- Get the current chromosome.
+			tempChromosome = populationMembers.get(i);
+			//---- Get the score for that chromosome.
+			chromosomeScore = dataSet.getChromosomeScoreForPopulation(tempChromosome);
+			//---- Update the chromosome's score.
+			tempChromosome.setScore(chromosomeScore);
+			
+		}
+		
+		
 	}
 	
 }

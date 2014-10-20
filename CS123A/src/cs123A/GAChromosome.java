@@ -3,7 +3,7 @@ package cs123A;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GAChromosome implements Comparable {
+public class GAChromosome implements Comparable<GAChromosome> {
 
 	//---- Stores the gain and offset information for the genetic algorithm chromosome.
 	private int[] gainVector;
@@ -243,7 +243,8 @@ public class GAChromosome implements Comparable {
 	/**
 	 * Sorting function for GA Chromosomes.  It sorts them in descending order based off the chromosome score.
 	 */
-	public int compareTo(Object other){
+	@Override
+	public int compareTo(GAChromosome other){
 		//----- Ensure the object is of the same class.
 		if(other.getClass() != this.getClass()) return 0;
 		
