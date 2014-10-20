@@ -50,14 +50,17 @@ public class BreastCancerDataSet {
 		long patientScore;
 		Patient patient;
 		
+		int[] chromosomeGainVector = chromosome.getGainVector();
+		int chromosomeOffset = chromosome.getOffset();
+		
 		//---- Iterate through the 
 		for(index = 0; index < setOfPatients.size(); index++){
 			//---- Get the patient
 			patient = setOfPatients.get(index);
 			//---- Determine the score for that patient
-			patientScore = patient.calculateLinearFunction(chromosome);
+			patientScore = patient.calculateLinearFunction(chromosomeGainVector, chromosomeOffset);
 			//---- If the patient is correctly categorized, give it a positive score.
-			if((patientScore > 0 && patient.isMalignant()) || (patientScore < 0 && !patient.isMalignant()))
+			if(patientScore > 0)
 				chromosomeScore++;
 			//---- Patient is miscategorized so give it a negative score.
 			else

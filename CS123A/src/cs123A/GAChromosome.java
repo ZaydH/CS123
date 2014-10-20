@@ -98,7 +98,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 		//---- Create the data vectors for the two parents and the child.
 		int i, lastIndex;
 		//---- Copy the gain components first.
-		for(i = 0; i < implicitDataVector.length; i++){
+		for(i = 0; i < otherGAGainVector.length; i++){
 			implicitDataVector[i] = implicitGAGainVector[i];
 			otherDataVector[i] = otherGAGainVector[i];
 			childDataVector[i] = 0;
@@ -140,7 +140,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 				int referenceWord = 0;
 				int dataWord = 0;
 				//---- Continue crossing over until the end of the word is reached
-				while(crossoverIndex < crossover_loc.length || byteIndex == crossover_loc[crossoverIndex] / 32){
+				while(crossoverIndex < crossover_loc.length && byteIndex == crossover_loc[crossoverIndex] / 32){
 					
 					//---- Extract the reference byte.
 					if(useImplicitInCrossover)
@@ -149,7 +149,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 						referenceWord = otherDataVector[byteIndex];	
 					
 					//----- Extract the crossover bit location.
-					crossoverBitLocation = crossover_loc[crossoverIndex] % 32;
+					crossoverBitLocation = 31 - crossover_loc[crossoverIndex] % 32;
 				
 					//----- Update the word with the crossed over data vector.
 					dataWord |= extractIntegerBits(referenceWord, previousCrossoverBitLocation, crossoverBitLocation);
@@ -210,10 +210,10 @@ public class GAChromosome implements Comparable<GAChromosome> {
 			return 0;
 		
 		//---- Shift the word over by the number of bits in the min position.
-		dataWord = dataWord >> (minBitPosition + 1);
+		dataWord = dataWord >>> (minBitPosition + 1);
 		
 		//---- Remove any preceding bits.
-		dataWord %= (2^(maxBitPosition-minBitPosition));
+		dataWord %= Math.pow(2, maxBitPosition-minBitPosition);
 		
 		//---- Reshift the word back.
 		dataWord = dataWord << (minBitPosition + 1);

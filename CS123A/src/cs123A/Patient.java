@@ -105,11 +105,7 @@ public class Patient {
 	 * @param offset	 Offset correction factor for this linear function
 	 * @return
 	 */
-	public long calculateLinearFunction(GAChromosome chromosome){
-		
-		//---- Extract chromosome features.
-		int[] gainVector = chromosome.getGainVector();
-		int offset = chromosome.getOffset();
+	public long calculateLinearFunction(int[] gainVector, int offset){
 		
 		//----- Include the offset correction.
 		long linearFunctionWeight = offset;

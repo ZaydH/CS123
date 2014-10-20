@@ -73,7 +73,7 @@ public class GAChromosomePopulation {
 		for(i = 0; i < tournamentSize; i++){
 			
 			//---- Select the index of the n
-			tournamentIndex = rand.nextInt() % populationMembers.size();
+			tournamentIndex = rand.nextInt(populationMembers.size());
 			//---- Extract the tournament chromosome
 			tournamentChromosome = populationMembers.get(tournamentIndex);
 			if(parentChromosome == null || tournamentChromosome.getScore() > parentChromosome.getScore())
@@ -95,6 +95,7 @@ public class GAChromosomePopulation {
 		//---- If the list of population members is not sorted, then sort it. 
 		if(!isSorted){
 			Collections.sort(populationMembers);
+			isSorted = true; //--- Mark the population sorted.
 		}
 		
 		//---- Build an array to store the n best chromosomes.
@@ -120,6 +121,9 @@ public class GAChromosomePopulation {
 		
 		//---- Adds a new chromosome to the population.
 		populationMembers.add(newChromosome);
+		
+		//---- Since a new population member was added, mark this no longer sorted.
+		isSorted = false;
 	}
 	
 	
@@ -145,6 +149,8 @@ public class GAChromosomePopulation {
 			
 		}
 		
+		//----- Since the population was rescored, mark it unsorted.
+		isSorted = false;
 		
 	}
 	
