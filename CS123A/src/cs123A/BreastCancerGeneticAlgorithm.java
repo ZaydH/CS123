@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 public class BreastCancerGeneticAlgorithm {
 
-	private static int NUMBER_OF_GENERATIONS = 100;
-	private static int PREVIOUS_GENERATION_CARRY_OVER_SIZE = 10;
+	private static int NUMBER_OF_GENERATIONS = 1000;
+	private static int PREVIOUS_GENERATION_CARRY_OVER_SIZE = 5;
 	private GAChromosome bestSolution;
 	private BreastCancerDataSet trainingDataSet;			//---- Used to train the linear classifier.
 	private BreastCancerDataSet verificationDataSet;  		//---- Used to measure the quality of the training set results.
@@ -129,11 +129,11 @@ public class BreastCancerGeneticAlgorithm {
 			while(newPopulation.getPopulationSize() < GAChromosomePopulation.MAXIMUM_POPULATION_SIZE){
 				
 				//---- Select two parents for crossover
-				parent1 = chromosomePopulation.performTournamentSelection();
-				parent2 = chromosomePopulation.performTournamentSelection();
+				parent1 = chromosomePopulation.performTournamentSelection(20);
+				parent2 = chromosomePopulation.performTournamentSelection(20);
 				
 				//---- Crossover parent chromosomes to form the child.
-				child = parent1.crossover(parent2, 2);
+				child = parent1.crossover(parent2, 7);
 				
 				//---- FIXME add bitwise mutation.
 				newPopulation.addChromosome(child);

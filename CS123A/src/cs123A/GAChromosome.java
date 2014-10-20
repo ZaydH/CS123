@@ -244,16 +244,12 @@ public class GAChromosome implements Comparable<GAChromosome> {
 	 * Sorting function for GA Chromosomes.  It sorts them in descending order based off the chromosome score.
 	 */
 	@Override
-	public int compareTo(GAChromosome other){
-		//----- Ensure the object is of the same class.
-		if(other.getClass() != this.getClass()) return 0;
-		
-		//---- Cast the other object to a GAChromsome
-		GAChromosome otherCasted = (GAChromosome)other;
-		
+	public int compareTo(GAChromosome other){		
 		//---- Chromosomes with higher scores go first in the sort.
-		if(this.chromosomeScore > otherCasted.chromosomeScore)
+		if(this.chromosomeScore > other.chromosomeScore)
 			return -1;
+		else if(this.chromosomeScore == other.chromosomeScore)
+			return 0;
 		else
 			return 1;
 		
