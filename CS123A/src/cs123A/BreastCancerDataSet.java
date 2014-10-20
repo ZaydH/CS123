@@ -62,14 +62,52 @@ public class BreastCancerDataSet {
 			//---- If the patient is correctly categorized, give it a positive score.
 			if(patientScore > 0)
 				chromosomeScore++;
-			//---- Patient is miscategorized so give it a negative score.
-			else
-				chromosomeScore--;	
+//			//---- Patient is miscategorized so give it a negative score.
+//			else
+//				chromosomeScore--;	
 			
 		}
 		
 		//---- Give the chromosome score.
 		return chromosomeScore;
+		
+	}
+	
+	/**
+	 * Calculates the accuracy for malignant tumors properly categorized.
+	 * 
+	 * @param chromosome	Genetic Algorithm Chromosome (Linear function)
+	 * @return				Percentage of malignant tumors correctly categorized.
+	 */
+	public double getMaligancyAccuracyForPopulation(GAChromosome chromosome){
+		
+		int index;
+		int malignancyCorrect = 0;
+		int numberOfMalignantPatients = 0;
+		long patientScore;
+		Patient patient;
+		
+		
+		int[] chromosomeGainVector = chromosome.getGainVector();
+		int chromosomeOffset = chromosome.getOffset();
+		
+		//---- Iterate through the 
+		for(index = 0; index < setOfPatients.size(); index++){
+			//---- Get the patient
+			patient = setOfPatients.get(index);
+			if(patient.isMalignant()){
+				numberOfMalignantPatients++;
+				
+				//---- Determine the score for that patient
+				patientScore = patient.calculateLinearFunction(chromosomeGainVector, chromosomeOffset);
+				//---- If the patient is correctly categorized, give it a positive score.
+				if(patientScore > 0)
+					malignancyCorrect++;
+			}	
+		}
+		
+		//---- Give the chromosome score.
+		return malignancyCorrect * 100.0 / numberOfMalignantPatients ;
 		
 	}
 	
