@@ -37,4 +37,38 @@ public class BreastCancerDataSet {
 	}
 	
 	
+	/**
+	 * Determines the score of a given chromosome and a population.
+	 * 
+	 * @param chromosome Chromosome whose population score will be calculated.
+	 * @return Score for the chromosome which is the number of correct identifications versus incorrect identifications.
+	 */
+	public int getChromosomeScoreForPopulation(GAChromosome chromosome){
+		
+		int chromosomeScore = 0;
+		int index;
+		long patientScore;
+		Patient patient;
+		
+		//---- Iterate through the 
+		for(index = 0; index < setOfPatients.size(); index++){
+			//---- Get the patient
+			patient = setOfPatients.get(index);
+			//---- Determine the score for that patient
+			patientScore = patient.calculateLinearFunction(chromosome);
+			//---- If the patient is correctly categorized, give it a positive score.
+			if((patientScore > 0 && patient.isMalignant()) || (patientScore < 0 && !patient.isMalignant()))
+				chromosomeScore++;
+			//---- Patient is miscategorized so give it a negative score.
+			else
+				chromosomeScore--;	
+			
+		}
+		
+		//---- Give the chromosome score.
+		return chromosomeScore;
+		
+	}
+	
+	
 }

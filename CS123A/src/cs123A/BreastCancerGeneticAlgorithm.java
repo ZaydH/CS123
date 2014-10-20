@@ -5,15 +5,24 @@ import java.util.Scanner;
 
 public class BreastCancerGeneticAlgorithm {
 
+	private static int NUMBER_OF_GENERATIONS = 100;
+	private static int PREVIOUS_GENERATION_CARRY_OVER_SIZE = 10;
+	private GAChromosome bestSolution;
 	private BreastCancerDataSet trainingDataSet;			//---- Used to train the linear classifier.
 	private BreastCancerDataSet verificationDataSet;  		//---- Used to measure the quality of the training set results.
 	private GAChromosomePopulation chromosomePopulation;	//---- Set of chromosomes used in the genetic algorithm.
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
+		//---- Initialize the genetic algorithm.
 		BreastCancerGeneticAlgorithm geneticAlgorithm = new BreastCancerGeneticAlgorithm();
 		
+		//---- Run the genetic algorithm.
+		geneticAlgorithm.run();
+		
+		//---- Print the results.
+		geneticAlgorithm.printResults();
+
 	}
 
 	
@@ -23,7 +32,6 @@ public class BreastCancerGeneticAlgorithm {
 	public BreastCancerGeneticAlgorithm(){
 		this("breast-cancer-wisconsin.data.txt");
 	}
-	
 	
 	/**
 	 * Constructor for the breast cancer genetic algorithm that allows users to specify a dataset file.
@@ -39,8 +47,9 @@ public class BreastCancerGeneticAlgorithm {
 		//---- Parse the dataset file.
 		this.parseDataSetFile(breastCancerDataSetFile);
 		
-		//---- Create the genetic algorithm chromosome population.
-		chromosomePopulation = GAChromosomePopulation.createRandomPopulation();
+		//---- Create the genetic algorithm chromosome population from a random generated solution set.
+		chromosomePopulation = new GAChromosomePopulation();
+		chromosomePopulation.createRandomPopulation();
 		
 	}
 	
@@ -92,5 +101,64 @@ public class BreastCancerGeneticAlgorithm {
 		
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public void run(){
+		
+		GAChromosome[] bestChromosomes;
+		GAChromosome parent1, parent2, child;
+		int generationNumber, i;
+		
+		//FIX_ME Write the code to run the genetic algorithm.
+		for(generationNumber = 0; generationNumber < NUMBER_OF_GENERATIONS; generationNumber++){
+			
+			//---- Build a new chromosome population.
+			GAChromosomePopulation newPopulation = new GAChromosomePopulation();
+			
+			//---- Get the specified number of best chromosomes from this generation.
+			bestChromosomes = chromosomePopulation.getBestChromosomes(PREVIOUS_GENERATION_CARRY_OVER_SIZE);
+			for(i = 0; i < PREVIOUS_GENERATION_CARRY_OVER_SIZE; i++)
+				newPopulation.addChromosome(bestChromosomes[i]);
+			
+			//---- Keep building the chromosome population until it reaches the specified size.
+			while(newPopulation.getPopulationSize() < GAChromosomePopulation.MAXIMUM_POPULATION_SIZE){
+				
+				//---- Select two parents for crossover
+				parent1 = chromosomePopulation.performTournamentSelection();
+				parent2 = chromosomePopulation.performTournamentSelection();
+				
+				//---- Crossover parent chromosomes to form the child.
+				child = parent1.crossover(parent2, 2);
+				
+				//---- FIXME add bitwise mutation.
+				newPopulation.addChromosome(child);
+			}
+			
+			//--- Replace the existing population with the new population.
+			chromosomePopulation = newPopulation;
+			
+		}
+		
+		//----- Extract the best chromosome from the final solution.
+		bestChromosomes = chromosomePopulation.getBestChromosomes(1);
+		//----- Get the best chromosome. 
+		bestSolution = bestChromosomes[0];
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public void printResults(){
+		
+		int chromosomeScore = verificationDataSet.getChromosomeScoreForPopulation(bestSolution);
+		
+		//---- Print a basic results summary.
+		System.out.println("The score for the best solution is: " + Integer.toString(chromosomeScore));
+		System.out.println("The maximum possible score is: " + Integer.toString(verificationDataSet.getDataSetSize()));
+		
+	}
 	
 }
