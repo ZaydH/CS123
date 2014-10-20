@@ -125,7 +125,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 		while(byteIndex < childDataVector.length){
 			
 			//---- This number does not contain a crossover point so copy it entirely.
-			if(crossoverIndex > crossover_loc.length || byteIndex < crossover_loc[crossoverIndex] / 32){
+			if(crossoverIndex == crossover_loc.length || byteIndex < crossover_loc[crossoverIndex] / 32){
 				if(useImplicitInCrossover)
 					childDataVector[byteIndex] = implicitDataVector[byteIndex];
 				else
