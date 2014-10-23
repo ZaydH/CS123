@@ -217,6 +217,9 @@ public class GAChromosome implements Comparable<GAChromosome> {
 		
 		//---- Remove any preceding bits.
 		dataWord %= Math.pow(2, maxBitPosition-minBitPosition);
+		//--- Correct for when there is no bit shifting.
+		if(dataWord < 0 && minBitPosition == -1)
+			dataWord *= -1;
 		
 		//---- Reshift the word back.
 		dataWord = dataWord << (minBitPosition + 1);
