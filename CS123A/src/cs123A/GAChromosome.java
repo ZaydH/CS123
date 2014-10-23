@@ -107,7 +107,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 			childDataVector[i] = 0;
 		}
 		//---- Copy the offset last.
-		lastIndex = implicitGAGainVector.length - 1;
+		lastIndex = otherDataVector.length - 1;
 		implicitDataVector[lastIndex] = this.getOffset();	
 		otherDataVector[lastIndex] = otherChromosome.getOffset();
 		childDataVector[lastIndex] = 0;
