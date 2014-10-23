@@ -18,7 +18,8 @@ public class GAChromosomePopulation {
 	public GAChromosomePopulation(){
 		populationMembers = new ArrayList<GAChromosome>();
 		isSorted = false;
-		rand = new Random();
+		if(rand == null)
+			rand = new Random();
 	}
 	
 	

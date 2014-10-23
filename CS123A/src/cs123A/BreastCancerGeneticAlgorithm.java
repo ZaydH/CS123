@@ -159,9 +159,12 @@ public class BreastCancerGeneticAlgorithm {
 					//---- Crossover parent chromosomes to form the child.
 					child = parent1.crossover(parent2, NUMBER_CROSSOVER_POINTS);
 					
+					//---- Perform mutation.
+					child.mutate();
+					
 					//---- FIXME add bitwise mutation.
 					newPopulation.addChromosome(child);
-				}
+				}	
 				
 				//--- Replace the existing population with the new population.
 				chromosomePopulation = newPopulation;
@@ -176,12 +179,19 @@ public class BreastCancerGeneticAlgorithm {
 			//---- Overwrite the best solution if appropriate by score or because no best solution found yet.
 			if(bestSolution == null || tempBestSolution.getScore() > bestSolution.getScore())
 				bestSolution = tempBestSolution;
+			
+			System.out.println("After "+ Integer.toString(restartNumber+1) + " run, the percent correct on the training set is: " 
+							   + String.format("%2.2f",bestSolution.getScore() * 100.0 / trainingDataSet.getDataSetSize()));
 		}
 		
 		//---- Print a basic results summary.
 		System.out.println("On the training set, the score for the best solution is: " + Integer.toString(bestSolution.getScore()));
 		System.out.println("The maximum possible score is: " + Integer.toString(trainingDataSet.getDataSetSize()));
 		System.out.println("The percent correct is: " +  String.format("%2.2f",bestSolution.getScore() * 100.0 / trainingDataSet.getDataSetSize()));		
+		
+		//---- Print the gain vector.
+		System.out.println("\nThe linear function weights are:");
+		System.out.println(bestSolution.toString());
 		
 	}
 	

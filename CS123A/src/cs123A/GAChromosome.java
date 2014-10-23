@@ -12,6 +12,9 @@ public class GAChromosome implements Comparable<GAChromosome> {
 	
 	private static Random randomGenerator;
 	
+	private static double MUTATION_PROBABILITY = 1.0 / 100;
+	public static int WORD_BIT_LENGTH = 32;
+	
 	
 	/**
 	 * Constructor for Genetic Algorithm Chromosome. 
@@ -272,6 +275,55 @@ public class GAChromosome implements Comparable<GAChromosome> {
 	 */
 	public void setScore(int newScore){
 		chromosomeScore = newScore;
+	}
+	
+	
+	public void mutate(){
+		
+		//----- Go through all the bits and get the see if it should be mutated.
+		int bitNumb, bitIndex, wordIndex, xorWord;
+		for(bitNumb = 0; bitNumb < WORD_BIT_LENGTH * gainVector.length + 1; bitNumb++ ){ //--- Plus 1 is for the offset
+			
+			//---- see if the bit should be mutated.
+			if(randomGenerator.nextFloat() < MUTATION_PROBABILITY){
+				//---- Get the bit position in the word
+				bitIndex = bitNumb % WORD_BIT_LENGTH;
+				//---- Get the word number.
+				wordIndex =  bitNumb / WORD_BIT_LENGTH;
+				//----- Get the word to xor in the mutation.
+				xorWord = 1 << bitIndex;
+				
+				//---- Perform the mutation.
+				if(wordIndex == gainVector.length)
+					offset ^= xorWord;
+				else
+					gainVector[wordIndex] ^= xorWord;
+			}
+		}
+		
+	}
+	
+	@Override
+	public String toString(){
+		
+		String outputString;
+		int index;
+		
+		//---- Print the vector weights.
+		index = 0;
+		outputString = "Clump Thickness Weight: " + gainVector[index++] + "\n";
+		outputString += "Cell Size Uniformity Weight: " + gainVector[index++] + "\n";
+		outputString += "Cell Shape Uniformity Weight: " + gainVector[index++] + "\n";
+		outputString += "Marginal Adhesion Weight: " + gainVector[index++] + "\n";
+		outputString += "Single Epithelial Cell Size Weight: " + gainVector[index++] + "\n";
+		outputString += "Bare Nucleoli Weight: " + gainVector[index++] + "\n";
+		outputString += "Bland Chromatin Weight: " + gainVector[index++] + "\n";
+		outputString += "Normal Nucleoli Weight: " + gainVector[index++] + "\n";
+		outputString += "Mitoses Weight: " + gainVector[index++] + "\n";
+		outputString += "Offset Weight: " + offset;
+		
+		return outputString;
+		
 	}
 	
 }
