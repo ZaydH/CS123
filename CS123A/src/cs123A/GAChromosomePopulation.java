@@ -144,7 +144,7 @@ public class GAChromosomePopulation {
 			//---- Get the current chromosome.
 			tempChromosome = populationMembers.get(i);
 			//---- Get the score for that chromosome.
-			chromosomeScore = dataSet.getChromosomeScoreForPopulation(tempChromosome);
+			chromosomeScore = dataSet.getChromosomeScoreForPopulation(tempChromosome, 0);
 			//---- Update the chromosome's score.
 			tempChromosome.setScore(chromosomeScore);
 			

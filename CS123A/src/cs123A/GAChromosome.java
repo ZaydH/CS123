@@ -87,7 +87,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 	 * @param otherChromosome Other Chromosome that will be crossed over.
 	 * @return Crossed over Genetic Algorithm Chromosome.
 	 */
-	public GAChromosome crossover(GAChromosome otherChromosome, int numb_points){
+	public GAChromosome crossover(GAChromosome otherChromosome, int numbPoints){
 		
 		//---- Extract the chromosome data for the two parent chromosomes.
 		int[] implicitGAGainVector = this.getGainVector();
@@ -114,8 +114,8 @@ public class GAChromosome implements Comparable<GAChromosome> {
 		
 		//----- Build the crossover bit location list.  This is the specific bit in the data vector
 		//----- where crossover will occur.
-		int[] crossover_loc = new int[numb_points]; 
-		for(i = 0; i < numb_points; i++){
+		int[] crossover_loc = new int[numbPoints]; 
+		for(i = 0; i < numbPoints; i++){
 			crossover_loc[i] = randomGenerator.nextInt(childDataVector.length*32);
 		}
 		//---- Sort the crossover locations.

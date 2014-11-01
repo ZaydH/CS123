@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class BreastCancerDataSet {
 
 	public final static int TRAINING_DATA_SET_SIZE = 200;
-	ArrayList<Patient> setOfPatients;
+	private ArrayList<Patient> setOfPatients;
 	
 	/**
 	 * Constructor to build datasets of breast cancer dataset.
@@ -43,7 +43,7 @@ public class BreastCancerDataSet {
 	 * @param chromosome Chromosome whose population score will be calculated.
 	 * @return Score for the chromosome which is the number of correct identifications versus incorrect identifications.
 	 */
-	public int getChromosomeScoreForPopulation(GAChromosome chromosome){
+	public int getChromosomeScoreForPopulation(GAChromosome chromosome, int malignancyBiasFactor){
 		
 		int chromosomeScore = 0;
 		int index;
@@ -62,6 +62,11 @@ public class BreastCancerDataSet {
 			//---- If the patient is correctly categorized, give it a positive score.
 			if(patientScore > 0)
 				chromosomeScore++;
+				if(patient.isMalignant())
+					chromosomeScore += malignancyBiasFactor;
+			else
+				if(patient.isMalignant())
+					chromosomeScore -= malignancyBiasFactor;
 //			//---- Patient is miscategorized so give it a negative score.
 //			else
 //				chromosomeScore--;	

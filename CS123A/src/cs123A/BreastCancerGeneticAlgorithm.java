@@ -200,7 +200,7 @@ public class BreastCancerGeneticAlgorithm {
 	 */
 	public void printResults(){
 		
-		int chromosomeScore = verificationDataSet.getChromosomeScoreForPopulation(bestSolution);
+		int chromosomeScore = verificationDataSet.getChromosomeScoreForPopulation(bestSolution, 0);
 		
 		//---- Print a basic results summary.
 		System.out.println("On the verification set, the score for the best solution is: " + Integer.toString(chromosomeScore));
