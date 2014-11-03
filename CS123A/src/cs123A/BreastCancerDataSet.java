@@ -10,6 +10,8 @@ public class BreastCancerDataSet {
 	public final static int MAXIMUM_TRAINING_DATA_SET_SIZE = 682;
 	private List<Patient> setOfPatients;
 	
+	private static boolean allowShuffling = true;
+	
 	/**
 	 * Constructor to build datasets of breast cancer dataset.
 	 */
@@ -87,7 +89,8 @@ public class BreastCancerDataSet {
 	 */
 	public BreastCancerDataSet removeRandomSubset(int numbElements){
 		//---- Shuffle the ArrayList.
-		//Collections.shuffle(setOfPatients);
+		if(allowShuffling)
+			Collections.shuffle(setOfPatients);
 		
 		List<Patient> removedSublist = new ArrayList<Patient>(setOfPatients.subList(0, numbElements));
 		
@@ -96,6 +99,14 @@ public class BreastCancerDataSet {
 		
 		//---- Create a new breast cancer data set.
 		return new BreastCancerDataSet(removedSublist);
+	}
+	
+	
+	/**
+	 * This is used to disable shuffling in the population for repeatibility analysis
+	 */
+	public static void disableDataSetRandomShuffling(){
+		allowShuffling = false;
 	}
 	
 	

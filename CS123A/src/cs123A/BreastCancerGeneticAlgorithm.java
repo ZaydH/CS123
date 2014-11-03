@@ -268,6 +268,8 @@ public class BreastCancerGeneticAlgorithm {
 	 * 
 	 * -BAL - Flag to enable the balance malignant patients 
 	 * proportionally between the training and verification data sets.
+	 * This is followed by an integer flag to indicate whether to disable shuffling.  
+	 * A 1 disables shuffling while a 0 leaves shuffling of patients enabled.
 	 * 
 	 * -NR - Indicator for the number of times to run the entire algorithm.
 	 * This is followed by an integer number.
@@ -327,6 +329,25 @@ public class BreastCancerGeneticAlgorithm {
 			case BAL:
 				
 				balanceMaligantPatients = true;
+				i++;
+				//---- Ensure no overflow.
+				if(i == args.length) return printInvalidInputNumberInputArguments();
+				try{
+					int shufflingInt = Integer.parseInt(args[i]);
+					
+					///----- Check the training data set size is valid.
+					if(shufflingInt == 1){
+						BreastCancerDataSet.disableDataSetRandomShuffling();
+					}
+					else if(shufflingInt != 0){
+						System.out.println("Error: The shuffling flag is invalid. Exiting...");
+						return false;
+					}
+				}
+				catch(Exception e){
+					System.out.println("Error: The shuffling flag is invalid. Exiting...");
+					return false;
+				}
 				break;
 			
 			//---------------------------------------------------//
