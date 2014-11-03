@@ -87,12 +87,12 @@ public class BreastCancerDataSet {
 	 */
 	public BreastCancerDataSet removeRandomSubset(int numbElements){
 		//---- Shuffle the ArrayList.
-		Collections.shuffle(setOfPatients);
+		//Collections.shuffle(setOfPatients);
 		
-		List<Patient> removedSublist = setOfPatients.subList(0, numbElements);
+		List<Patient> removedSublist = new ArrayList<Patient>(setOfPatients.subList(0, numbElements));
 		
 		//----- Update this objects set of patients.
-		setOfPatients = setOfPatients.subList(numbElements, setOfPatients.size());
+		setOfPatients = new ArrayList<Patient>(setOfPatients.subList(numbElements, setOfPatients.size()));
 		
 		//---- Create a new breast cancer data set.
 		return new BreastCancerDataSet(removedSublist);
@@ -134,7 +134,6 @@ public class BreastCancerDataSet {
 		return getChromosomeScoreForPopulation(chromosome, 1);
 	}
 	
-	
 	/**
 	 * Determines the score of a given chromosome and a population.
 	 * 
@@ -143,11 +142,17 @@ public class BreastCancerDataSet {
 	 * @return Score for the chromosome which is the number of correct identifications versus incorrect identifications.
 	 */
 	public int getChromosomeScoreForPopulation(GAChromosome chromosome, int malignancyBiasFactor){
+		return (int)Math.round(getChromosomeScoreAndSeparationForPopulation(chromosome, 1)[0]);
+	}
+	
+
+	public double[] getChromosomeScoreAndSeparationForPopulation(GAChromosome chromosome, int malignancyBiasFactor){
 		
 		int chromosomeScore = 0;
 		int index;
-		long patientScore;
+		double patientScore;
 		Patient patient;
+		double separation = 0;
 		
 		int[] chromosomeGainVector = chromosome.getGainVector();
 		int chromosomeOffset = chromosome.getOffset();
@@ -158,6 +163,8 @@ public class BreastCancerDataSet {
 			patient = setOfPatients.get(index);
 			//---- Determine the score for that patient
 			patientScore = patient.calculateLinearFunction(chromosomeGainVector, chromosomeOffset);
+			//---- Update the separation.
+			separation += patientScore;
 			//---- If the patient is correctly categorized, give it a positive score.
 			if(patientScore > 0)
 				chromosomeScore++;
@@ -173,7 +180,7 @@ public class BreastCancerDataSet {
 		}
 		
 		//---- Give the chromosome score.
-		return chromosomeScore;
+		return new double[] {chromosomeScore, separation};
 		
 	}
 	

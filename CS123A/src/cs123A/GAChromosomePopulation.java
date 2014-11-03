@@ -167,7 +167,7 @@ public class GAChromosomePopulation {
 	public void scorePopulationMembers(BreastCancerDataSet dataSet, int malignancyBiasFactor){
 	
 		GAChromosome tempChromosome;
-		int chromosomeScore;
+		double chromosomeScore[];
 		
 		//---- Iterate through all population members and generate their score.
 		for(int i = 0; i < populationMembers.size(); i++){
@@ -175,9 +175,10 @@ public class GAChromosomePopulation {
 			//---- Get the current chromosome.
 			tempChromosome = populationMembers.get(i);
 			//---- Get the score for that chromosome.
-			chromosomeScore = dataSet.getChromosomeScoreForPopulation(tempChromosome, malignancyBiasFactor);
+			chromosomeScore = dataSet.getChromosomeScoreAndSeparationForPopulation(tempChromosome, malignancyBiasFactor);
 			//---- Update the chromosome's score.
-			tempChromosome.setScore(chromosomeScore);
+			tempChromosome.setScore((int)Math.round(chromosomeScore[0]));
+			tempChromosome.setTotalSeparation(chromosomeScore[1]);
 			
 		}
 		

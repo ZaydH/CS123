@@ -8,17 +8,17 @@ public class Patient {
 	private final static int MALIGNANT_INDICATOR = 4;
 	
 	@SuppressWarnings("unused")
-	private long idNumber;
-	private int clumpThickness;
-	private int cellSizeUniformity;
-	private int cellShapeUniformity;
-	private int marginalAdhesion;
-	private int singleEpithelialCellSize;
-	private int bareNucleoli;
-	private int blandChromatin;
-	private int normalNucleoli;
-	private int mitoses;
-	private boolean malignant;
+	private final long idNumber;
+	private final int clumpThickness;
+	private final int cellSizeUniformity;
+	private final int cellShapeUniformity;
+	private final int marginalAdhesion;
+	private final int singleEpithelialCellSize;
+	private final int bareNucleoli;
+	private final int blandChromatin;
+	private final int normalNucleoli;
+	private final int mitoses;
+	private final boolean malignant;
 	
 	
 	
@@ -85,9 +85,10 @@ public class Patient {
 		mitoses = Integer.valueOf(features[index++]);
 		
 		//---- Check if the patient tumor is malignant or benign
-		if( Integer.valueOf(features[index]) == BENIGN_INDICATOR ) malignant = false;
-		else if( Integer.valueOf(features[index]) == MALIGNANT_INDICATOR ) malignant = true;
-		else assert(false);
+		if( Integer.valueOf(features[index]) == BENIGN_INDICATOR ) 
+			malignant = false;
+		else 
+			malignant = true;
 		index++; //---- Increment index count.
 		
 	}
@@ -112,6 +113,7 @@ public class Patient {
 
 		//----- Calculate the linear parameters for each feature.
 		int index = 0;
+		linearFunctionWeight += (long)gainVector[index++] * mitoses;
 		linearFunctionWeight += (long)gainVector[index++] * clumpThickness;
 		linearFunctionWeight += (long)gainVector[index++] * cellSizeUniformity;
 		linearFunctionWeight += (long)gainVector[index++] * cellShapeUniformity;
@@ -120,7 +122,6 @@ public class Patient {
 		linearFunctionWeight += (long)gainVector[index++] * bareNucleoli;
 		linearFunctionWeight += (long)gainVector[index++] * blandChromatin;
 		linearFunctionWeight += (long)gainVector[index++] * normalNucleoli;
-		linearFunctionWeight += (long)gainVector[index++] * mitoses;		
 
 		//---- Correct for whether the tumor is malignant or not.
 		if(malignant) return linearFunctionWeight;
@@ -131,7 +132,7 @@ public class Patient {
 	/**
 	 * Accessor for elements 
 	 * 
-	 * @return Number of measureable datapoints for each patient.
+	 * @return Number of measureable data points for each patient.
 	 */
 	public static int numberDataElementsPerPatient(){
 		return NUMBER_OF_FEATURES - 2;

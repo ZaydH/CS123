@@ -9,6 +9,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 	private int[] gainVector;
 	private int offset;
 	private int chromosomeScore;
+	private double totalSepartion;
 	
 	private static Random randomGenerator;
 	
@@ -164,7 +165,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 					useImplicitInCrossover = !useImplicitInCrossover;
 				}
 				
-				//---- Extract the remanent of the word.
+				//---- Extract the remnant of the word.
 				if(useImplicitInCrossover)
 					referenceWord = implicitDataVector[byteIndex];
 				else
@@ -254,8 +255,16 @@ public class GAChromosome implements Comparable<GAChromosome> {
 		//---- Chromosomes with higher scores go first in the sort.
 		if(this.chromosomeScore > other.chromosomeScore)
 			return -1;
+		//---- Use the total separation as a secondary sort parameter when there
+		//---- is a tie based off exclusively score.
 		else if(this.chromosomeScore == other.chromosomeScore)
-			return 0;
+			if(this.totalSepartion > other.totalSepartion)
+				return -1;
+			else if(this.totalSepartion == other.totalSepartion)
+				return 0;
+			else
+				return 1;
+		//----Chromosomes with lower scores go second.
 		else
 			return 1;
 		
@@ -270,6 +279,14 @@ public class GAChromosome implements Comparable<GAChromosome> {
 	public int getScore(){
 		return chromosomeScore;
 	}	
+	
+	public void setTotalSeparation(double totalSeparation){
+		this.totalSepartion = totalSeparation;
+	}
+	
+	public double getTotalSeparation(){
+		return totalSepartion;
+	}
 	
 	/**
 	 * Updates the score of a chromosome.
@@ -309,12 +326,12 @@ public class GAChromosome implements Comparable<GAChromosome> {
 	@Override
 	public String toString(){
 		
-		String outputString;
-		int index;
+		String outputString = "";
 		
 		//---- Print the vector weights.
-		index = 0;
-		outputString = "Clump Thickness Weight: " + gainVector[index++] + "\n";
+		int index = 0;
+		outputString += "Mitoses Weight: " + gainVector[index++] + "\n";
+		outputString += "Clump Thickness Weight: " + gainVector[index++] + "\n";
 		outputString += "Cell Size Uniformity Weight: " + gainVector[index++] + "\n";
 		outputString += "Cell Shape Uniformity Weight: " + gainVector[index++] + "\n";
 		outputString += "Marginal Adhesion Weight: " + gainVector[index++] + "\n";
@@ -322,7 +339,7 @@ public class GAChromosome implements Comparable<GAChromosome> {
 		outputString += "Bare Nucleoli Weight: " + gainVector[index++] + "\n";
 		outputString += "Bland Chromatin Weight: " + gainVector[index++] + "\n";
 		outputString += "Normal Nucleoli Weight: " + gainVector[index++] + "\n";
-		outputString += "Mitoses Weight: " + gainVector[index++] + "\n";
+
 		outputString += "Offset Weight: " + offset;
 		
 		return outputString;
