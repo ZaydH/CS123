@@ -1,16 +1,18 @@
 package cs123A;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 public class BreastCancerGeneticAlgorithm {
 
-	private static int NUMBER_OF_GENERATIONS = 1000;
-	private static int PREVIOUS_GENERATION_CARRY_OVER_SIZE = 5;
-	private static int NUMBER_CROSSOVER_POINTS = 3;
-	private static int NUMBER_RANDOM_RESTARTS = 5;
+	private static final int NUMBER_OF_GENERATIONS = 1000;
+	private static final int PREVIOUS_GENERATION_CARRY_OVER_SIZE = 5;
+	private static final int NUMBER_CROSSOVER_POINTS = 3;
+	private static final int NUMBER_RANDOM_RESTARTS = 5;
+	private static int numberTimesToRunProgram = 1;
+	private static boolean balanceMaligantPatients = false;
+	private static int maligancyBiasFactor = 1;
 	private GAChromosome bestSolution;
 	private BreastCancerDataSet trainingDataSet;			//---- Used to train the linear classifier.
 	private BreastCancerDataSet verificationDataSet;  		//---- Used to measure the quality of the training set results.
@@ -19,17 +21,33 @@ public class BreastCancerGeneticAlgorithm {
 	
 	public static void main(String[] args) {
 		
-		//---- Initialize the genetic algorithm.
-		BreastCancerGeneticAlgorithm geneticAlgorithm = new BreastCancerGeneticAlgorithm();
+		//---- Parse the input arguments and ensure they are valid.
+		boolean inputArgumentsValid = parseInputArguments(args);
+		if(!inputArgumentsValid)
+			return;
 		
-		//---- Run the genetic algorithm.
-		geneticAlgorithm.run();
-		
-		//---- Print the results.
-		geneticAlgorithm.printResults();
+		for(int i = 0; i < numberTimesToRunProgram; i++){
+			
+			//---- Print the number of times the algorithm is running
+			if(numberTimesToRunProgram > 1)
+				System.out.println("Genetic Algorithm Execution #" + i 
+							   	   + " of " + numberTimesToRunProgram + ".");
+			
+			//---- Initialize the genetic algorithm.
+			BreastCancerGeneticAlgorithm geneticAlgorithm = new BreastCancerGeneticAlgorithm();
+			
+			//---- Run the genetic algorithm.
+			geneticAlgorithm.run();
+			
+			//---- Print the results.
+			geneticAlgorithm.printResults();
+		}
 
 	}
 
+
+	
+	
 	
 	/**
 	 * Constructor for Breast Cancer Genetic Algorithm using default data set file location.
@@ -58,15 +76,16 @@ public class BreastCancerGeneticAlgorithm {
 	}
 	
 	/**
-	 * Parser for the breast cancer dataset.
+	 * Parser for the breast cancer data set.
 	 * 
-	 * @param filename Name of the breast cancer dataset file.
+	 * @param filename Name of the breast cancer data set file.
 	 */
 	private void parseDataSetFile(String filename){
 		
 		String fileline;
-		
-		ArrayList<String> allLines = new ArrayList<String>(); 
+		BreastCancerDataSet benignPatients = new BreastCancerDataSet();
+		BreastCancerDataSet malignantPatients = new BreastCancerDataSet();
+		Patient tempPatient;
 		
 		//---- Open the data set file and parse it.
 		try{
@@ -78,11 +97,16 @@ public class BreastCancerGeneticAlgorithm {
 				//---- Get the next line.
 				fileline = dataFileIn.nextLine();
 				
-				//---- Ignore the incomplete dataset elements.
+				//---- Ignore the incomplete data set elements.
 				if(fileline.contains("?")) continue;
 				
 				//----- If valid data element, add it to the verification set.
-				allLines.add(fileline);
+				tempPatient = new Patient(fileline);
+				if(tempPatient.isMalignant())
+					malignantPatients.addPatient(tempPatient);
+				else
+					benignPatients.addPatient(tempPatient);
+					
 			}
 			
 			//---- Close the input stream.
@@ -92,27 +116,34 @@ public class BreastCancerGeneticAlgorithm {
 			assert(false);
 		}
 		
-		//---- Build the training set randomly.
-		int randomIndex;
-		String replacementString;
-		while(trainingDataSet.getDataSetSize() < BreastCancerDataSet.TRAINING_DATA_SET_SIZE){
+		//----- Separate the source data into the training and verification datasets.
+		if(!balanceMaligantPatients){
 			
-			//---- Get a random index.
-			randomIndex = rand.nextInt(allLines.size());
+			//---- Merge the two data sets into one.
+			verificationDataSet = BreastCancerDataSet.mergeDataSets(benignPatients, malignantPatients);
+			//---- Remove the Training Data Set from the verification data set.
+			trainingDataSet = verificationDataSet.removeRandomSubset(BreastCancerDataSet.getTrainingDataSetSize());
 			
-			//----- Add next patient to the data set.
-			trainingDataSet.addPatient(allLines.get(randomIndex));
-			//---- Get the last element
-			replacementString = allLines.get(allLines.size()-1);
-			allLines.set(randomIndex, replacementString); //---- Replace the removed index.
-			
-			//---- Remove the last index.
-			allLines.remove(allLines.size()-1);
 		}
-		
-		//---- Use the remaining chromosomes in the verification set.
-		while(allLines.size() > 0){
-			verificationDataSet.addPatient(allLines.remove(0));
+		else{
+			
+			//--- Extract the percentage of the population that will be in the training set.
+			double percentTraining = 1.0* BreastCancerDataSet.getTrainingDataSetSize();
+			percentTraining /= (malignantPatients.getDataSetSize() + benignPatients.getDataSetSize());
+			
+			//---- Get the malignant patients for training set.
+			int numbMalignantInTrainingSet = (int)Math.round(percentTraining * malignantPatients.getDataSetSize() );
+			trainingDataSet = malignantPatients.removeRandomSubset( numbMalignantInTrainingSet );
+			
+			//---- Get the Benign patients for the training set.
+			int numbBenignInTrainingSet =  BreastCancerDataSet.getTrainingDataSetSize() - numbMalignantInTrainingSet;
+			BreastCancerDataSet tempDataSet = benignPatients.removeRandomSubset( numbBenignInTrainingSet );
+			//---- Construct the full training set.
+			trainingDataSet = BreastCancerDataSet.mergeDataSets(trainingDataSet, tempDataSet)
+			
+			
+			//---- Merge the two remaining objects in benign and malignant data set into the verification set.
+			verificationDataSet = BreastCancerDataSet.mergeDataSets(benignPatients, malignantPatients);
 		}
 		
 		
@@ -139,7 +170,7 @@ public class BreastCancerGeneticAlgorithm {
 			for(generationNumber = 0; generationNumber < NUMBER_OF_GENERATIONS; generationNumber++){
 				
 				//---- Score population members.
-				chromosomePopulation.scorePopulationMembers(trainingDataSet);
+				chromosomePopulation.scorePopulationMembers(trainingDataSet, maligancyBiasFactor);
 				
 				//---- Build a new chromosome population.
 				GAChromosomePopulation newPopulation = new GAChromosomePopulation();
@@ -150,7 +181,7 @@ public class BreastCancerGeneticAlgorithm {
 					newPopulation.addChromosome(bestChromosomes[i]);
 				
 				//---- Keep building the chromosome population until it reaches the specified size.
-				while(newPopulation.getPopulationSize() < GAChromosomePopulation.MAXIMUM_POPULATION_SIZE){
+				while(newPopulation.getPopulationSize() < GAChromosomePopulation.getMaximumPopulationSize()){
 					
 					//---- Select two parents for crossover
 					parent1 = chromosomePopulation.performTournamentSelection(20);
@@ -162,7 +193,7 @@ public class BreastCancerGeneticAlgorithm {
 					//---- Perform mutation.
 					child.mutate();
 					
-					//---- FIXME add bitwise mutation.
+					//---- Add the modified chromosome to the new population.
 					newPopulation.addChromosome(child);
 				}	
 				
@@ -200,7 +231,7 @@ public class BreastCancerGeneticAlgorithm {
 	 */
 	public void printResults(){
 		
-		int chromosomeScore = verificationDataSet.getChromosomeScoreForPopulation(bestSolution, 0);
+		int chromosomeScore = verificationDataSet.getChromosomeScoreForPopulation(bestSolution);
 		
 		//---- Print a basic results summary.
 		System.out.println("On the verification set, the score for the best solution is: " + Integer.toString(chromosomeScore));
@@ -211,9 +242,154 @@ public class BreastCancerGeneticAlgorithm {
 		
 	}
 	
-	
+	/**
+	 * 
+	 * 
+	 * @return GAChromosome that has the best score from the current population.
+	 */
 	public GAChromosome getBestSolution(){
 		return bestSolution;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * -BalancePopulations - Flag to enable the balance malignant patients 
+	 * proportionally between the training and verification datasets.
+	 * 
+	 * -n - Indicator for the number of times to run the entire algorithm.
+	 * This is followed by an integer number.
+	 * 
+	 * -TrainingDataSetSize - Indicator for the number of the size of the training dataset.
+	 * This is followed by an integer number.
+	 * 
+	 * -MaxPopSize Flag to change the maximum population size of the algorithm.
+	 * This is followed by an integer number.
+	 * 
+	 * @param args Command line input arguments.
+	 * 
+	 * @return True of the input arguments were successfully parsed, false otherwise.
+	 */
+	private static boolean parseInputArguments(String[] args){
+		
+		
+		//----- Parse the input flags.  Each flag has a 
+		for(int i = 0; i < args.length; i++){
+			switch(args[i]){
+			
+			
+			//---------------------------------------------------//
+			//    Enable the balancing of Malignant Patients     //
+			//---------------------------------------------------//
+			case "-BalancePopulations":
+				
+				balanceMaligantPatients = true;
+			
+			//---------------------------------------------------//
+			//     Parse the size of the training data set       //
+			//---------------------------------------------------//
+			case "-TrainingDataSetSize":
+			
+				i++;
+				//---- Ensure no overflow.
+				if(i == args.length) return printInvalidInputNumberInputArguments();
+				try{
+					BreastCancerDataSet.setTrainingDataSetSize(Integer.parseInt(args[i]));
+					///----- Check the training data set size is valid.
+					if(BreastCancerDataSet.getTrainingDataSetSize() < 1
+							|| BreastCancerDataSet.getTrainingDataSetSize() > BreastCancerDataSet.MAXIMUM_TRAINING_DATA_SET_SIZE){
+						System.out.println("Error: The training data set size is invalid. Exiting...");
+						return false;
+					}
+				}
+				catch(Exception e){
+					System.out.println("Error: The training data set size is invalid. Exiting...");
+					return false;
+				}
+		
+			//---------------------------------------------------//
+			//           Parse the Malignant Penalty             //
+			//---------------------------------------------------//
+			case "-MaligantPenalty":
+				
+				i++;
+				//---- Ensure no overflow.
+				if(i == args.length) return printInvalidInputNumberInputArguments();
+				try{
+					maligancyBiasFactor = Integer.parseInt(args[i]);
+					if(maligancyBiasFactor < 1){
+						System.out.println("Error: The maligancy bias factor must be greater than 1. Exiting...");
+						return false;
+					}
+				}
+				catch(Exception e){
+					System.out.println("Error: The maligancy bias factor is invalid. Exiting...");
+					return false;
+				}
+			
+			//---------------------------------------------------//
+			//        Parse the maximum population size.         //
+			//---------------------------------------------------//
+			case "-MaxPopSize":
+				
+				i++;
+				//---- Ensure no overflow.
+				if(i == args.length) return printInvalidInputNumberInputArguments();
+				try{
+					GAChromosomePopulation.setMaximumPopulationSize(Integer.parseInt(args[i]));
+					if(GAChromosomePopulation.getMaximumPopulationSize() < 1){
+						System.out.println("Error: The maximum population size is invalid. Exiting...");
+						return false;
+					}
+				}
+				catch(Exception e){
+					System.out.println("Error: The maximum population size is invalid. Exiting...");
+					return false;
+				}
+			
+			
+			//---------------------------------------------------//
+			//   Parse the number of times to run the program.   //
+			//---------------------------------------------------//
+			case "-n":
+				i++;
+				//---- Ensure no overflow.
+				if(i == args.length) return printInvalidInputNumberInputArguments();
+				try{
+					numberTimesToRunProgram = Integer.parseInt(args[i]);
+					if(numberTimesToRunProgram < 1){
+						System.out.println("Error: The number of times the program is run is invalid. Exiting...");
+						return false;
+					}
+				}
+				catch(Exception e){
+					System.out.println("Error: The number of times the program is run is invalid. Exiting...");
+					return false;
+				}
+			
+			//--------------------------------------------------//
+			//  Unable to parse input argument so return exit.  //
+			//--------------------------------------------------//
+			default:
+				System.out.println("Error: Invalid input argument \"" + args[i] + "\".");
+				return false;
+			}
+		}
+		
+		//----- All arguments successfully parsed so return true.
+		return true;
+	}
+	/**
+	 * Error message used to print an invalid number of input arguments.
+	 * 
+	 * @return false to indicate the parse failed.
+	 */
+	private static boolean printInvalidInputNumberInputArguments(){
+		System.out.println("Error: The number of input arguments is invalid. Exiting...");
+		return false;
 	}
 	
 }

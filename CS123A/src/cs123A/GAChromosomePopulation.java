@@ -6,10 +6,11 @@ import java.util.Random;
 
 public class GAChromosomePopulation {
 
-	public static int MAXIMUM_POPULATION_SIZE = 1000;
+	private static int maximumPopulationSize = 1000;
 	private boolean isSorted;
 	private ArrayList<GAChromosome> populationMembers;
 	private Random rand;
+	
 	
 	/**
 	 * Constructor for the GAChromosomePopulation class.  
@@ -22,6 +23,25 @@ public class GAChromosomePopulation {
 			rand = new Random();
 	}
 	
+	/**
+	 * Accessor for the maximum Genetic Algorithm population size.
+	 * 
+	 * @return Current maximum size of the population.
+	 */
+	public static int getMaximumPopulationSize(){
+		return maximumPopulationSize;
+	}
+	
+	
+	/**
+	 * Mutator to Update the Maximum Population Size.
+	 * 
+	 * @param newMaximumPopulationSize New maximum population size
+	 */
+	public static void setMaximumPopulationSize(int newMaximumPopulationSize){
+		maximumPopulationSize = newMaximumPopulationSize;
+	}
+	
 	
 	/**
 	 * Static constructor to create a random genetic algorithm population.
@@ -31,7 +51,7 @@ public class GAChromosomePopulation {
 	public void createRandomPopulation(){
 		
 		//---- Create the random population 
-		while(populationMembers.size() < MAXIMUM_POPULATION_SIZE){
+		while(populationMembers.size() < maximumPopulationSize){
 			populationMembers.add(GAChromosome.createRandomChromosome());
 		}
 	}
@@ -114,11 +134,11 @@ public class GAChromosomePopulation {
 	/**
 	 * Adds a new chromosome to this population.
 	 * 
-	 * @param newChromosome  Add a new chromsome to this population.
+	 * @param newChromosome  Add a new chromosome to this population.
 	 */
 	public void addChromosome(GAChromosome newChromosome){
 		//---- Ensure not exceeding the maximum population size.
-		assert(populationMembers.size() < MAXIMUM_POPULATION_SIZE);
+		assert(populationMembers.size() < maximumPopulationSize);
 		
 		//---- Adds a new chromosome to the population.
 		populationMembers.add(newChromosome);
@@ -127,13 +147,24 @@ public class GAChromosomePopulation {
 		isSorted = false;
 	}
 	
-	
 	/**
-	 * Scores the chromosome population based off the passed in dataset.
+	 * Scores the chromosome population based off the passed in data set.  Uses 1 (no bias factor)
+	 * as the malignancy bias factor.
 	 * 
 	 * @param dataSet Breast Cancer Data Set by Which the Population will be Scored.
 	 */
 	public void scorePopulationMembers(BreastCancerDataSet dataSet){
+		scorePopulationMembers(dataSet, 1);
+	}
+	
+	/**
+	 * Scores the chromosome population based off the passed in data set.
+	 * 
+	 * @param dataSet Breast Cancer Data Set by Which the Population will be Scored.
+	 * @param malignancyBiasFactor Score associated with an incorrect/correct characterization
+	 * of a malignant tumor.
+	 */
+	public void scorePopulationMembers(BreastCancerDataSet dataSet, int malignancyBiasFactor){
 	
 		GAChromosome tempChromosome;
 		int chromosomeScore;
@@ -144,13 +175,13 @@ public class GAChromosomePopulation {
 			//---- Get the current chromosome.
 			tempChromosome = populationMembers.get(i);
 			//---- Get the score for that chromosome.
-			chromosomeScore = dataSet.getChromosomeScoreForPopulation(tempChromosome, 0);
+			chromosomeScore = dataSet.getChromosomeScoreForPopulation(tempChromosome, malignancyBiasFactor);
 			//---- Update the chromosome's score.
 			tempChromosome.setScore(chromosomeScore);
 			
 		}
 		
-		//----- Since the population was rescored, mark it unsorted.
+		//----- Since the population was re-scored, mark it unsorted.
 		isSorted = false;
 		
 	}

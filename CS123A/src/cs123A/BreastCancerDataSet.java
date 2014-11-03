@@ -1,11 +1,14 @@
 package cs123A;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BreastCancerDataSet {
 
-	public final static int TRAINING_DATA_SET_SIZE = 200;
-	private ArrayList<Patient> setOfPatients;
+	private static int trainingDataSetSize = 200;
+	public final static int MAXIMUM_TRAINING_DATA_SET_SIZE = 682;
+	private List<Patient> setOfPatients;
 	
 	/**
 	 * Constructor to build datasets of breast cancer dataset.
@@ -13,6 +16,33 @@ public class BreastCancerDataSet {
 	public BreastCancerDataSet(){
 		//----- Create the patient array
 		setOfPatients = new ArrayList<Patient>();
+	}
+	
+	/**
+	 * Additional Private Constructor that takes an ArrayList of patients.
+	 * 
+	 * @param patients ArrayList of patients that will serve as the patients in the data set.
+	 */
+	private BreastCancerDataSet(List<Patient> patients){
+		setOfPatients = patients;
+	}
+	
+	
+	/**
+	 * Accessor for the Training Data Set Size
+	 * 
+	 * @return Size of the Training Data Set
+	 */
+	public static int getTrainingDataSetSize(){
+		return trainingDataSetSize;
+	}
+	
+
+	/**
+	 * Mutator for the Training Data Set Size.
+	 */
+	public static void setTrainingDataSetSize(int newTrainingDataSetSize){
+		trainingDataSetSize = newTrainingDataSetSize;
 	}
 	
 	
@@ -23,6 +53,16 @@ public class BreastCancerDataSet {
 	 */
 	public void addPatient(String features){
 		Patient newPatient = new Patient(features);
+		setOfPatients.add(newPatient);
+	}
+	
+
+	/**
+	 * Adds a new patient to the training set.
+	 * 
+	 * @param newPatient A Patient object,
+	 */
+	public void addPatient(Patient newPatient){
 		setOfPatients.add(newPatient);
 	}
 	
@@ -38,9 +78,68 @@ public class BreastCancerDataSet {
 	
 	
 	/**
+	 * Splits a breast cancer into two.  The implicit data set is reduced in size by
+	 * "numbElements" and those elements are placed into the returned BreastCancerDataSet
+	 * object.
+	 * 
+	 * @param numbElements Number of elements to remove from the current data
+	 * @return New BreastCancerDataSet of size numbElements
+	 */
+	public BreastCancerDataSet removeRandomSubset(int numbElements){
+		//---- Shuffle the ArrayList.
+		Collections.shuffle(setOfPatients);
+		
+		List<Patient> removedSublist = setOfPatients.subList(0, numbElements);
+		
+		//----- Update this objects set of patients.
+		setOfPatients = setOfPatients.subList(numbElements, setOfPatients.size());
+		
+		//---- Create a new breast cancer data set.
+		return new BreastCancerDataSet(removedSublist);
+	}
+	
+	
+	/**
+	 * Static method to merge two BreastCancerDataSets.
+	 * 
+	 * @param dataSet1 First BreastCancerDataSet object.
+	 * @param dataSet2 Second BreastCancerDataSet object.
+	 * 
+	 * @return Merged  BreastCancerDataSet object.
+	 */
+	public static BreastCancerDataSet mergeDataSets(BreastCancerDataSet dataSet1, 
+													BreastCancerDataSet dataSet2){
+		
+		//--- Combine the two lists of the datasets.
+		List<Patient> mergedList = new ArrayList<Patient>();
+		
+		//---- Append the two lists.
+		mergedList.addAll(dataSet1.setOfPatients);
+		mergedList.addAll(dataSet2.setOfPatients);
+		
+		//--- Build and return the new data set.
+		return new BreastCancerDataSet(mergedList);
+		
+	}
+	
+	
+	
+	/**
 	 * Determines the score of a given chromosome and a population.
 	 * 
 	 * @param chromosome Chromosome whose population score will be calculated.
+	 * @return Score for the chromosome which is the number of correct identifications versus incorrect identifications.
+	 */
+	public int getChromosomeScoreForPopulation(GAChromosome chromosome){
+		return getChromosomeScoreForPopulation(chromosome, 1);
+	}
+	
+	
+	/**
+	 * Determines the score of a given chromosome and a population.
+	 * 
+	 * @param chromosome Chromosome whose population score will be calculated.
+	 * @param malignancyBiasFactor A bias factor to skew the results to favor correct scoring of malignant tumors.
 	 * @return Score for the chromosome which is the number of correct identifications versus incorrect identifications.
 	 */
 	public int getChromosomeScoreForPopulation(GAChromosome chromosome, int malignancyBiasFactor){
@@ -63,10 +162,10 @@ public class BreastCancerDataSet {
 			if(patientScore > 0)
 				chromosomeScore++;
 				if(patient.isMalignant())
-					chromosomeScore += malignancyBiasFactor;
+					chromosomeScore += (malignancyBiasFactor-1); //--- Subtract one since already incremented
 			else
 				if(patient.isMalignant())
-					chromosomeScore -= malignancyBiasFactor;
+					chromosomeScore -= (malignancyBiasFactor-1); //--- Subtract one since already deccremented
 //			//---- Patient is miscategorized so give it a negative score.
 //			else
 //				chromosomeScore--;	
