@@ -251,7 +251,7 @@ public class BreastCancerGeneticAlgorithm {
 	}
 	
 	/**
-	 * Accessor for the best solution in a dataset.
+	 * Accessor for the best solution in a data set.
 	 * 
 	 * @return GAChromosome that has the best score from the current population.
 	 */
