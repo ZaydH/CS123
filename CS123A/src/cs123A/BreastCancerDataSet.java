@@ -223,4 +223,15 @@ public class BreastCancerDataSet {
 	}
 	
 	
+	/**
+	 * Determines the percentage of correct assignments for this data set and chromosome pairing.
+	 * 
+	 * @param chromosome GAChromosome Object
+	 * @return Percent of correct classifications 
+	 */
+	public double getPercentCorrect(GAChromosome chromosome){
+		int numbCorrect = this.getChromosomeScoreForPopulation(chromosome);
+		return numbCorrect * 100.0 / this.getDataSetSize();
+	}
+	
 }

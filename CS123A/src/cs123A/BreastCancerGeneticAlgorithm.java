@@ -1,6 +1,9 @@
 package cs123A;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.util.Scanner;
 
 public class BreastCancerGeneticAlgorithm {
@@ -9,6 +12,8 @@ public class BreastCancerGeneticAlgorithm {
 	private static final int PREVIOUS_GENERATION_CARRY_OVER_SIZE = 5;
 	private static final int NUMBER_CROSSOVER_POINTS = 3;
 	private static final int NUMBER_RANDOM_RESTARTS = 5;
+	private static boolean saveResultsToFile = false;
+	private static String resultsFileName = "GA Results.csv";
 	private static int numberTimesToRunProgram = 1;
 	private static boolean balanceMaligantPatients = false;
 	private static int maligancyBiasFactor = 1;
@@ -39,6 +44,9 @@ public class BreastCancerGeneticAlgorithm {
 			
 			//---- Print the results.
 			geneticAlgorithm.printResults();
+			
+			//--- If the program is set to output to a file, then do so.
+			if(saveResultsToFile) geneticAlgorithm.outputResultsToFile();
 		}
 
 	}
@@ -232,11 +240,11 @@ public class BreastCancerGeneticAlgorithm {
 		
 		//---- Get statistics on the solution.
 		int scoreWithMalignancyBiasFactor = trainingDataSet.getChromosomeScoreForPopulation(bestSolution, maligancyBiasFactor);
-		int numbCorrect = verificationDataSet.getChromosomeScoreForPopulation(bestSolution);
 		
 		//---- Print a basic results summary.
 		System.out.println("On the verification set, the score for the best solution is: " + scoreWithMalignancyBiasFactor);
-		System.out.println("The percent correct is: " + String.format("%2.2f",numbCorrect * 100.0 / verificationDataSet.getDataSetSize()) + "%.");
+		System.out.println("The percent correct is: " + String.format("%2.2f", verificationDataSet.getPercentCorrect(bestSolution)) 
+							+ "%.");
 		System.out.println("The percentage of malignant tumors correctly categorized is: " 
 							+  String.format("%2.2f",verificationDataSet.getMaligancyAccuracyForPopulation(bestSolution)) + "%.");
 		
@@ -251,11 +259,12 @@ public class BreastCancerGeneticAlgorithm {
 		return bestSolution;
 	}
 	
-	
-	
+		
 	
 	
 	/**
+	 * 
+	 * -OF - Flag to instruct the program to save the results to a file.
 	 * 
 	 * -BAL - Flag to enable the balance malignant patients 
 	 * proportionally between the training and verification data sets.
@@ -276,7 +285,7 @@ public class BreastCancerGeneticAlgorithm {
 	 * 
 	 * @return True of the input arguments were successfully parsed, false otherwise.
 	 */
-	enum CommandLineFlag{ SS, NR, BAL, MP, TDS}
+	enum CommandLineFlag{ SS, NR, BAL, MP, TDS, OF}
 	private static boolean parseInputArguments(String[] args){
 		
 		//--- Command line flag.
@@ -305,6 +314,12 @@ public class BreastCancerGeneticAlgorithm {
 			//---- Run switch case on the command line flags.
 			switch(clf){
 			
+			//---------------------------------------------------//
+			//    Enable the output of the results to a file     //
+			//---------------------------------------------------//
+			case OF:
+				saveResultsToFile = true;
+				break;
 			
 			//---------------------------------------------------//
 			//    Enable the balancing of Malignant Patients     //
@@ -420,5 +435,67 @@ public class BreastCancerGeneticAlgorithm {
 		System.out.println("Error: The number of input arguments is invalid. Exiting...");
 		return false;
 	}
+	
+	
+	/**
+	 * Appends the simulation results to a CSV file.
+	 */
+	private void outputResultsToFile(){
+
+		String outputString = "";
+		File outputFile = new File(resultsFileName);
+		//---- Flag to say whether to create a new file.
+		boolean createFile = !outputFile.exists() || outputFile.isDirectory();
+				
+		//---- Open the file out
+		try{
+			//---- Open the output file.
+			BufferedWriter fileOut = new BufferedWriter(new FileWriter(outputFile, true)); //--- True is for append.
+		
+			//---- If needed added a header.
+			if(createFile){
+				outputString += "Chromosomes Per Generation,Malignancy Penalty,Training Data Set Size,Balance Malignant Patients,";
+				outputString += "Total Percent Correct,Malignant Percent Correct,";
+				outputString += "Mitoses,Clump Thickness,Cell Size Uniformity, Cell Shape Uniformity,Marginal Adhesion,Single Epithelilal Cell Size,";
+				outputString += "Bare Nucleoli,Bland Chromatin, Normal Nucleoli,Offset";
+				//---- Write the file
+				fileOut.write(outputString);
+				//--- Reset the output string.
+				outputString = "";
+			}
+			
+			//--- Add a new line from the previous data.
+			fileOut.newLine();
+			
+			//---- Output basic information on the results.
+			outputString += GAChromosomePopulation.getMaximumPopulationSize();
+			outputString += "," + maligancyBiasFactor;
+			outputString += "," + BreastCancerDataSet.getTrainingDataSetSize();
+			outputString += "," + balanceMaligantPatients;
+			outputString += "," + verificationDataSet.getPercentCorrect(bestSolution);
+			outputString += "," + verificationDataSet.getMaligancyAccuracyForPopulation(bestSolution);
+			
+			//---- Get and output the gain vector
+			int[] gainVector = bestSolution.getGainVector();
+			for(int i = 0; i < gainVector.length; i++)
+				outputString += "," + gainVector[i];
+			//---- Get and output the offset vector
+			outputString += "," + bestSolution.getOffset();
+			
+			//--- Output the results.
+			fileOut.write(outputString);
+			//--- Close the output stream.
+			fileOut.close();
+		}
+		//---- Catch a file write error.
+		catch(Exception e){
+			System.out.println("Error writing to file: \"" + resultsFileName + "\".  No results written.");
+		}
+		
+		
+	}
+	
+	
+	
 	
 }
