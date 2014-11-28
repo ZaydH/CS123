@@ -16,7 +16,7 @@ public class BreastCancerGeneticAlgorithm {
 	private static String resultsFileName = "GA Results.csv";
 	private static int numberTimesToRunProgram = 1;
 	private static boolean balanceMaligantPatients = false;
-	private static int maligancyBiasFactor = 1;
+	private static int malignancyBiasFactor = 1;
 	private GAChromosome bestSolution;
 	private BreastCancerDataSet trainingDataSet;			//---- Used to train the linear classifier.
 	private BreastCancerDataSet verificationDataSet;  		//---- Used to measure the quality of the training set results.
@@ -169,7 +169,7 @@ public class BreastCancerGeneticAlgorithm {
 			chromosomePopulation = new GAChromosomePopulation();
 			chromosomePopulation.createRandomPopulation();
 			//---- Score population members.
-			chromosomePopulation.scorePopulationMembers(trainingDataSet, maligancyBiasFactor);
+			chromosomePopulation.scorePopulationMembers(trainingDataSet, malignancyBiasFactor);
 			
 			// Iterate through all the generations.
 			for(generationNumber = 0; generationNumber < NUMBER_OF_GENERATIONS; generationNumber++){
@@ -203,7 +203,7 @@ public class BreastCancerGeneticAlgorithm {
 				chromosomePopulation = newPopulation;
 				
 				//---- Score population members.
-				chromosomePopulation.scorePopulationMembers(trainingDataSet, maligancyBiasFactor);
+				chromosomePopulation.scorePopulationMembers(trainingDataSet, malignancyBiasFactor);
 				
 			}
 			
@@ -239,7 +239,7 @@ public class BreastCancerGeneticAlgorithm {
 	public void printResults(){
 		
 		//---- Get statistics on the solution.
-		int scoreWithMalignancyBiasFactor = verificationDataSet.getChromosomeScoreForPopulation(bestSolution, maligancyBiasFactor);
+		int scoreWithMalignancyBiasFactor = verificationDataSet.getChromosomeScoreForPopulation(bestSolution, malignancyBiasFactor);
 		
 		//---- Print a basic results summary.
 		System.out.println("On the verification set, the score for the best solution is: " + scoreWithMalignancyBiasFactor);
@@ -331,7 +331,7 @@ public class BreastCancerGeneticAlgorithm {
 				balanceMaligantPatients = true;
 				i++;
 				//---- Ensure no overflow.
-				if(i == args.length) return printInvalidInputNumberInputArguments();
+				if(i == args.length) return printInvalidNumberInputArguments();
 				try{
 					int shufflingInt = Integer.parseInt(args[i]);
 					
@@ -357,7 +357,7 @@ public class BreastCancerGeneticAlgorithm {
 			
 				i++;
 				//---- Ensure no overflow.
-				if(i == args.length) return printInvalidInputNumberInputArguments();
+				if(i == args.length) return printInvalidNumberInputArguments();
 				try{
 					BreastCancerDataSet.setTrainingDataSetSize(Integer.parseInt(args[i]));
 					///----- Check the training data set size is valid.
@@ -380,10 +380,10 @@ public class BreastCancerGeneticAlgorithm {
 				
 				i++;
 				//---- Ensure no overflow.
-				if(i == args.length) return printInvalidInputNumberInputArguments();
+				if(i == args.length) return printInvalidNumberInputArguments();
 				try{
-					maligancyBiasFactor = Integer.parseInt(args[i]);
-					if(maligancyBiasFactor < 1){
+					malignancyBiasFactor = Integer.parseInt(args[i]);
+					if(malignancyBiasFactor < 1){
 						System.out.println("Error: The maligancy bias factor must be greater than or equal to 1. Exiting...");
 						return false;
 					}
@@ -401,7 +401,7 @@ public class BreastCancerGeneticAlgorithm {
 				
 				i++;
 				//---- Ensure no overflow.
-				if(i == args.length) return printInvalidInputNumberInputArguments();
+				if(i == args.length) return printInvalidNumberInputArguments();
 				try{
 					GAChromosomePopulation.setMaximumPopulationSize(Integer.parseInt(args[i]));
 					if(GAChromosomePopulation.getMaximumPopulationSize() < 1){
@@ -421,7 +421,7 @@ public class BreastCancerGeneticAlgorithm {
 			case NR:
 				i++;
 				//---- Ensure no overflow.
-				if(i == args.length) return printInvalidInputNumberInputArguments();
+				if(i == args.length) return printInvalidNumberInputArguments();
 				try{
 					numberTimesToRunProgram = Integer.parseInt(args[i]);
 					if(numberTimesToRunProgram < 1){
@@ -452,7 +452,7 @@ public class BreastCancerGeneticAlgorithm {
 	 * 
 	 * @return false to indicate the parse failed.
 	 */
-	private static boolean printInvalidInputNumberInputArguments(){
+	private static boolean printInvalidNumberInputArguments(){
 		System.out.println("Error: The number of input arguments is invalid. Exiting...");
 		return false;
 	}
@@ -490,7 +490,7 @@ public class BreastCancerGeneticAlgorithm {
 			
 			//---- Output basic information on the results.
 			outputString += GAChromosomePopulation.getMaximumPopulationSize();
-			outputString += "," + maligancyBiasFactor;
+			outputString += "," + malignancyBiasFactor;
 			outputString += "," + BreastCancerDataSet.getTrainingDataSetSize();
 			outputString += "," + balanceMaligantPatients;
 			outputString += "," + verificationDataSet.getPercentCorrect(bestSolution);

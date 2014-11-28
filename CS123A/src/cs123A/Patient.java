@@ -5,6 +5,7 @@ public class Patient {
 	//---- Stores the number of 
 	private final static int NUMBER_OF_FEATURES = 11;
 	private final static int BENIGN_INDICATOR = 2;
+	@SuppressWarnings("unused")
 	private final static int MALIGNANT_INDICATOR = 4;
 	
 	@SuppressWarnings("unused")
