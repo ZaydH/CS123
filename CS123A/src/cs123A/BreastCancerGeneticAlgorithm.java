@@ -239,7 +239,7 @@ public class BreastCancerGeneticAlgorithm {
 	public void printResults(){
 		
 		//---- Get statistics on the solution.
-		int scoreWithMalignancyBiasFactor = trainingDataSet.getChromosomeScoreForPopulation(bestSolution, maligancyBiasFactor);
+		int scoreWithMalignancyBiasFactor = verificationDataSet.getChromosomeScoreForPopulation(bestSolution, maligancyBiasFactor);
 		
 		//---- Print a basic results summary.
 		System.out.println("On the verification set, the score for the best solution is: " + scoreWithMalignancyBiasFactor);
@@ -384,7 +384,7 @@ public class BreastCancerGeneticAlgorithm {
 				try{
 					maligancyBiasFactor = Integer.parseInt(args[i]);
 					if(maligancyBiasFactor < 1){
-						System.out.println("Error: The maligancy bias factor must be greater than 1. Exiting...");
+						System.out.println("Error: The maligancy bias factor must be greater than or equal to 1. Exiting...");
 						return false;
 					}
 				}

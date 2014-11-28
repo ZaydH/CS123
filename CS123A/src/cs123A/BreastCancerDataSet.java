@@ -183,7 +183,7 @@ public class BreastCancerDataSet {
 					chromosomeScore += (malignancyBiasFactor-1); //--- Subtract one since already incremented
 			else
 				if(patient.isMalignant())
-					chromosomeScore -= (malignancyBiasFactor-1); //--- Subtract one since already deccremented
+					chromosomeScore -= (malignancyBiasFactor-1); //--- Subtract one since already decremented
 //			//---- Patient is miscategorized so give it a negative score.
 //			else
 //				chromosomeScore--;	
